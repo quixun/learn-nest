@@ -5,26 +5,23 @@ import { TaskRepository } from './task.repository';
 import { isUUID } from 'class-validator';
 import { TaskStatus } from './task-status-enum';
 import { GetTasksFilterDto } from './DTO/get-tasks-filter.dto';
+import { User } from '../auth/user.entity';
 
 @Injectable()
 export class TasksService {
   constructor(private readonly taskRepository: TaskRepository) {}
 
-  getAllTasks() {
-    return this.taskRepository.findAllTasks();
+  getTasks(filter: GetTasksFilterDto, user: User) {
+    return this.taskRepository.findAllTasks(filter, user);
   }
 
   //
 
-  async getTaskById(id: string): Promise<Task> {
+  async getTaskById(id: string, user: User): Promise<Task> {
     if (!isUUID(id)) {
       throw new NotFoundException(`Invalid UUID format: "${id}"`);
     }
-    const task = await this.taskRepository.findById(id);
-    if (task === null) {
-      throw new NotFoundException(`Task with ID "${id}" not found`);
-    }
-    return task;
+    return await this.taskRepository.findById(id, user);
   }
 
   getTasksWithFilter(filterDto: GetTasksFilterDto) {
@@ -32,17 +29,24 @@ export class TasksService {
   }
 
   //
-  async updateStatusTaskById(id: string, status: TaskStatus): Promise<Task> {
-    return await this.taskRepository.updateById(id, status);
+  async updateStatusTaskById(
+    id: string,
+    status: TaskStatus,
+    user: User,
+  ): Promise<Task> {
+    return await this.taskRepository.updateById(id, status, user);
   }
 
   //
-  deleteTaskById(id: string): Promise<void> {
-    return this.taskRepository.deleteById(id);
+  deleteTaskById(id: string, user: User): Promise<void> {
+    if (!isUUID(id)) {
+      throw new NotFoundException(`Invalid UUID format: "${id}"`);
+    }
+    return this.taskRepository.deleteById(id, user);
   }
 
   //
-  async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
-    return this.taskRepository.createTask(createTaskDto);
+  async createTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
+    return this.taskRepository.createTask(createTaskDto, user);
   }
 }
