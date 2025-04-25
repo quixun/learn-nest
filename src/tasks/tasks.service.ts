@@ -6,7 +6,6 @@ import { isUUID } from 'class-validator';
 import { TaskStatus } from './task-status-enum';
 import { GetTasksFilterDto } from './DTO/get-tasks-filter.dto';
 
-
 @Injectable()
 export class TasksService {
   constructor(private readonly taskRepository: TaskRepository) {}

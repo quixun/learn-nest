@@ -5,9 +5,10 @@ import { TasksService } from './tasks.service';
 import { Task } from './task.entity';
 import { TaskRepository } from './task.repository';
 import { DataSource } from 'typeorm';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Task, TaskRepository])],
+  imports: [TypeOrmModule.forFeature([Task, TaskRepository]), AuthModule],
   controllers: [TasksController],
   providers: [
     TasksService,
